@@ -213,31 +213,65 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  classifier-reborn
-  css_parser
-  feedjira
-  httparty
-  jekyll
-  jekyll-archives
-  jekyll-email-protect
+  activesupport (= 7.1.5)
+  benchmark (= 0.4.0)
+  bibtex-ruby (= 6.1.0)
+  citeproc (= 1.0.10)
+  citeproc-ruby (= 1.1.14)
+  classifier-reborn (= 2.3.0)
+  concurrent-ruby (= 1.3.4)
+  crass (= 1.0.6)
+  csl (= 1.6.0)
+  csl-styles (= 1.0.1.11)
+  css_parser (= 1.19.1)
+  cssminify2 (= 2.0.1)
+  deep_merge (= 1.2.2)
+  fast-stemmer (= 1.0.2)
+  feedjira (= 3.2.3)
+  ffi (= 1.17.0)
+  google-protobuf (= 3.25.5)
+  htmlcompressor (= 0.4.0)
+  httparty (= 0.22.0)
+  i18n (= 1.14.6)
+  jekyll (= 4.3.4)
+  jekyll-archives (= 2.2.1)
+  jekyll-email-protect (= 1.1.0)
   jekyll-feed
-  jekyll-get-json
-  jekyll-imagemagick
-  jekyll-jupyter-notebook
-  jekyll-link-attributes
-  jekyll-minifier
-  jekyll-paginate-v2
-  jekyll-regex-replace
-  jekyll-sass-converter (~> 3.0.0)
-  jekyll-scholar
+  jekyll-get-json (= 1.0.0)
+  jekyll-imagemagick (= 1.4.0)
+  jekyll-jupyter-notebook (= 0.0.6)
+  jekyll-link-attributes (= 1.0.1)
+  jekyll-minifier (= 0.1.10)
+  jekyll-paginate-v2 (= 3.0.0)
+  jekyll-regex-replace (= 1.1.0)
+  jekyll-sass-converter (= 3.0.0)
+  jekyll-scholar (= 7.1.3)
   jekyll-sitemap
-  jekyll-tabs
-  jekyll-toc
-  jekyll-twitter-plugin
+  jekyll-tabs (= 1.2.1)
+  jekyll-toc (= 0.19.0)
+  jekyll-twitter-plugin (= 2.1.0)
   jemoji
-  sass-embedded (~> 1.69.5)
-  unicode_utils
-  webrick
+  json (= 2.7.2)
+  json-minify (= 0.0.3)
+  latex-decode (= 0.4.0)
+  logger (= 1.6.1)
+  loofah (= 2.22.0)
+  mercenary (= 0.4.0)
+  mini_mime (= 1.1.5)
+  minitest (= 5.25.1)
+  multi_xml (= 0.6.0)
+  namae (= 1.2.0)
+  public_suffix (= 6.0.1)
+  rake (= 13.2.1)
+  rexml (= 3.3.8)
+  rouge (= 4.4.0)
+  sass-embedded (= 1.69.5)
+  sax-machine (= 1.3.2)
+  terminal-table (= 3.0.2)
+  uglifier (= 4.2.1)
+  unicode-display_width (= 2.6.0)
+  unicode_utils (= 1.4.0)
+  webrick (= 1.8.2)
 
 BUNDLED WITH
    2.5.18
