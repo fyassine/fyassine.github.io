@@ -1,6 +1,21 @@
 plugins:
-  - "@shopify/prettier-plugin-liquid"
+  - '@shopify/prettier-plugin-liquid'
 printWidth: 150
-trailingComma: "es5"
+trailingComma: 'es5'
 semi: true
 singleQuote: true
+tabWidth: 2
+useTabs: false
+overrides:
+  - files: '*.liquid'
+    options:
+      parser: 'liquid-html'
+  - files: '*.scss'
+    options:
+      parser: 'scss'
+  - files: '*.yml'
+    options:
+      parser: 'yaml'
+  - files: '*.md'
+    options:
+      proseWrap: 'preserve'

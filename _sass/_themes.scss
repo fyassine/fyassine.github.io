@@ -2,7 +2,7 @@
  * Themes
  ******************************************************************************/
 
-@use "sass:color";
+@use 'sass:color';
 
 :root {
   --global-bg-color: #{$white-color};
@@ -69,7 +69,7 @@
   }
 }
 
-html[data-theme="dark"] {
+html[data-theme='dark'] {
   --global-bg-color: #{$grey-color-dark};
   --global-code-bg-color: #{$code-bg-color-dark};
   --global-text-color: #{$grey-color-light};
@@ -109,7 +109,7 @@ html[data-theme="dark"] {
   }
 }
 
-html[data-theme-setting="dark"] {
+html[data-theme-setting='dark'] {
   #light-toggle-system {
     display: none;
   }
@@ -130,7 +130,7 @@ html[data-theme-setting="dark"] {
   }
 }
 
-html[data-theme-setting="light"] {
+html[data-theme-setting='light'] {
   #light-toggle-system {
     display: none;
   }
