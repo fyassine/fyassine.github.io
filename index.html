@@ -1,13 +1,188 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fraj Yassine Lakhal</title>
+<meta name="description" content="Fraj Yassine Lakhal — robotics engineer in Munich. M.Sc. Robotics, Cognition, Intelligence (TUM).">
+<link rel="canonical" href="https://yassinelakhal.tech/">
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1a1a1a;
+    --muted: #6b6b6b;
+    --rule: #e4e4e4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111111;
+      --fg: #e8e8e8;
+      --muted: #8f8f8f;
+      --rule: #2a2a2a;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 14px/1.6 ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  main {
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 18vh 16px 30vh;
+  }
+  h1 { font-size: 20px; font-weight: 600; margin: 0 0 4px; letter-spacing: 0.02em; }
+  h2 { font-size: 14px; font-weight: 600; margin: 0 0 16px; }
+  h3 { font-size: 14px; font-weight: 600; margin: 0; }
+  p { margin: 0 0 12px; }
+  a { color: inherit; text-underline-offset: 3px; text-decoration-color: var(--muted); }
+  a:hover { text-decoration-color: currentColor; }
+  ul { margin: 4px 0 0; padding-left: 18px; }
+  li { margin: 2px 0; }
+  .muted { color: var(--muted); }
+  .intro { margin-bottom: 28px; }
+  nav a { display: block; text-decoration: none; width: fit-content; }
+  nav a:hover { text-decoration: underline; }
+  section {
+    margin-top: 96px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    scroll-margin-top: 24px;
+  }
+  .entry { margin-bottom: 20px; }
+  .top { display: inline-block; margin-top: 8px; color: var(--muted); }
+  footer { margin-top: 28px; color: var(--muted); font-size: 12px; }
+</style>
+</head>
+<body>
+<main id="top">
+  <h1>Fraj Yassine Lakhal</h1>
+  <p class="muted">Robotics engineer · Munich, Germany</p>
+
+  <p class="intro">M.Sc. Robotics, Cognition, Intelligence at TUM.<br>
+  Robotics in medicine, ROS systems, deep learning.</p>
+
+  <nav>
+    <a href="#education">|—— education</a>
+    <a href="#experience">|—— experience</a>
+    <a href="#projects">|—— projects</a>
+    <a href="#skills">|—— skills</a>
+    <a href="#contact">|—— contact</a>
+  </nav>
+
+  <footer>yassinelakhal.tech</footer>
+
+  <section id="education">
+    <h2>education</h2>
+
+    <div class="entry">
+      <h3>M.Sc. Robotics, Cognition, Intelligence</h3>
+      <p class="muted">2023 – 2026 · Technical University of Munich</p>
+      <ul>
+        <li>Deep learning and robotics in medicine</li>
+        <li>Thesis: <a href="https://github.com/fyassine/ad-early-detection">early Alzheimer's prediction from fMRI connectivity</a> (LMU Klinikum). Graph embeddings + LSTM, 0.83 test ROC-AUC</li>
+      </ul>
+    </div>
+
+    <div class="entry">
+      <h3>B.Sc. Computer Science</h3>
+      <p class="muted">2020 – 2023 · Technical University of Munich</p>
+      <ul>
+        <li>Specialization in economics</li>
+        <li>Thesis at Intel: SRAM repair with genetic algorithms, +7.25% good die per wafer</li>
+      </ul>
+    </div>
+
+    <a class="top" href="#top">↑ top</a>
+  </section>
+
+  <section id="experience">
+    <h2>experience</h2>
+
+    <div class="entry">
+      <h3>Research Assistant</h3>
+      <p class="muted">2026 – present · Klinikum rechts der Isar, TUM</p>
+      <ul>
+        <li>Multimodal CNN classifier for ENT diagnostics: 87% accuracy, 50 ms inference</li>
+        <li>Pilot deployment in 2 clinics, building a multi-center dataset</li>
+      </ul>
+    </div>
+
+    <div class="entry">
+      <h3>Machine Learning &amp; Software Development</h3>
+      <p class="muted">2023 – 2025 · Intel Corp., Munich</p>
+      <ul>
+        <li>ML model for SRAM area analysis informing product decisions</li>
+        <li>RAG-based support chatbot, cut developer tickets by 50%+</li>
+      </ul>
+    </div>
+
+    <div class="entry">
+      <h3>Engineering Analytics Tool Development</h3>
+      <p class="muted">2021 – 2023 · Intel Corp., Munich</p>
+      <ul>
+        <li>Migrated a Java monolith to React + Django microservices</li>
+        <li>Docker / Kubernetes CI/CD, integration time from 1 day to 1 hour</li>
+      </ul>
+    </div>
+
+    <a class="top" href="#top">↑ top</a>
+  </section>
+
+  <section id="projects">
+    <h2>projects</h2>
+
+    <div class="entry">
+      <h3><a href="https://github.com/fyassine/_liver_ultrasound_ros">Multi-sensor tracked liver ultrasound</a></h3>
+      <p class="muted">2025 – 2026 · Chair for Computer Aided Medical Procedures</p>
+      <p>ROS 1/2 pipeline syncing 24 data feeds, with a Gazebo digital twin for sim-to-real.</p>
+    </div>
+
+    <div class="entry">
+      <h3><a href="https://github.com/fyassine/Human-Robot-Interaction">Human motion tracking for safe HRC</a></h3>
+      <p class="muted">2025 · Cyber-Physical Systems, TUM</p>
+      <p>UDP bridge streaming Vicon motion capture into ROS 2 for collision avoidance.</p>
+    </div>
+
+    <div class="entry">
+      <h3><a href="https://github.com/fyassine/3d-face-reconstruction">3D face reconstruction</a></h3>
+      <p class="muted">2024 – 2025 · Visual Computing Group, TUM</p>
+      <p>Faces from RGB-D video in C++ / OpenCV with an Intel RealSense.</p>
+    </div>
+
+    <div class="entry">
+      <h3><a href="https://github.com/fyassine/Helbling_STARTHACK25_Sonetto">Voice assistant with conversational memory</a></h3>
+      <p class="muted">2025 · START Hack, St. Gallen</p>
+      <p>Noise-isolating audio pipeline and memory layer for a service robot, built in 36 hours.</p>
+    </div>
+
+    <div class="entry">
+      <h3><a href="https://github.com/fyassine/windturbine-predictive-maintenance">Wind turbine predictive maintenance</a></h3>
+      <p class="muted">2024 · TUM Makeathon, winning team</p>
+    </div>
+
+    <a class="top" href="#top">↑ top</a>
+  </section>
+
+  <section id="skills">
+    <h2>skills</h2>
+    <p>ROS, RViz, Gazebo, Python, C++, PyTorch, OpenCV, Docker, Kubernetes, PostgreSQL, CI/CD</p>
+    <p class="muted">Arabic, French (native) · German, English (C1)</p>
+    <a class="top" href="#top">↑ top</a>
+  </section>
+
+  <section id="contact">
+    <h2>contact</h2>
+    <p>
+      <a href="mailto:lakhalfrajyassine@gmail.com">lakhalfrajyassine@gmail.com</a><br>
+      <a href="https://www.linkedin.com/in/fraj-yassine-lakhal">linkedin.com/in/fraj-yassine-lakhal</a><br>
+      <a href="https://github.com/fyassine">github.com/fyassine</a>
+    </p>
+    <a class="top" href="#top">↑ top</a>
+  </section>
+</main>
+</body>
 </html>
