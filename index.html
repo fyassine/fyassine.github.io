@@ -6,12 +6,35 @@
 <title>Fraj Yassine Lakhal</title>
 <meta name="description" content="Fraj Yassine Lakhal — robotics engineer in Munich. M.Sc. Robotics, Cognition, Intelligence (TUM).">
 <link rel="canonical" href="https://yassinelakhal.tech/">
+<link rel="preload" href="fonts/dm-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/dm-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+  /* Self-hosted (no requests to Google). DM Sans is variable 100–1000; DM Mono ships 400 and 500 only. */
+  @font-face {
+    font-family: "DM Sans";
+    src: url("fonts/dm-sans-latin-wght-normal.woff2") format("woff2");
+    font-weight: 100 1000;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "DM Mono";
+    src: url("fonts/dm-mono-latin-400-normal.woff2") format("woff2");
+    font-weight: 400;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "DM Mono";
+    src: url("fonts/dm-mono-latin-500-normal.woff2") format("woff2");
+    font-weight: 500;
+    font-display: swap;
+  }
   :root {
     --bg: #ffffff;
     --fg: #1a1a1a;
     --muted: #6b6b6b;
     --rule: #e4e4e4;
+    --mono: "DM Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --sans: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -33,16 +56,18 @@
     margin: 0;
     background: var(--bg);
     color: var(--fg);
-    font: 14px/1.6 ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    font: 14px/1.6 var(--mono);
   }
   main {
     max-width: 620px;
     margin: 0 auto;
     padding: 0 16px;
   }
+  /* lvh keeps each slide at least as tall as the screen even when mobile toolbars collapse,
+     so the next section never peeks in; the fit script below sizes content to the smaller svh. */
   .slide {
     min-height: 100vh;
-    min-height: 100svh;
+    min-height: 100lvh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -50,15 +75,21 @@
     scroll-snap-align: center;
     scroll-snap-stop: always;
   }
-  h1 { font-size: 20px; font-weight: 600; margin: 0 0 4px; letter-spacing: 0.02em; }
-  h2 { font-size: 14px; font-weight: 600; margin: 0 0 16px; }
-  h3 { font-size: 14px; font-weight: 600; margin: 0; }
+  h1 { font-size: 20px; font-weight: 500; margin: 0 0 4px; letter-spacing: 0.02em; }
+  h2 { font-size: 14px; font-weight: 500; margin: 0 0 16px; color: var(--muted); }
+  h3 { font-size: 14px; font-weight: 500; margin: 0; }
   p { margin: 0 0 12px; }
   a { color: inherit; text-underline-offset: 3px; text-decoration-color: var(--muted); }
   a:hover { text-decoration-color: currentColor; }
   ul { margin: 4px 0 0; padding-left: 18px; }
   li { margin: 2px 0; }
   .muted { color: var(--muted); }
+  /* Running text in sans for readability; names, dates and navigation stay monospace. */
+  .intro, li, .entry p:not(.muted), #skills p:not(.muted) {
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.5;
+  }
   .intro { margin-bottom: 28px; }
   nav a { display: block; text-decoration: none; width: fit-content; }
   nav a:hover { text-decoration: underline; }
@@ -76,6 +107,18 @@
   .reveal:hover { color: var(--fg); border-color: var(--fg); }
   .top { display: inline-block; margin-top: 8px; color: var(--muted); }
   footer { margin-top: 28px; color: var(--muted); font-size: 12px; }
+  .svh-probe { position: fixed; top: 0; height: 100vh; height: 100svh; width: 0; visibility: hidden; }
+  /* With JavaScript, the paging script below moves one section per gesture and keeps mobile
+     toolbars from collapsing, so slides match the visible screen exactly (dvh). */
+  html.paging { scroll-snap-type: none; scroll-behavior: auto; }
+  html.paging .slide { min-height: 100dvh; }
+  html.paging .svh-probe { height: 100dvh; }
+  .slide:focus { outline: none; }
+  @media (max-width: 600px) {
+    .slide { padding: 20px 0; }
+    .entry { margin-bottom: 14px; }
+    h2 { margin-bottom: 12px; }
+  }
 </style>
 </head>
 <body>
@@ -215,6 +258,164 @@
         btn.replaceWith(link);
         link.focus();
       }, { once: true });
+    })();
+
+    // Scale down a slide's content just enough to fit the smallest visible screen height,
+    // so on phones each section fills one screen without spilling into the next.
+    (function () {
+      var probe = document.createElement("div");
+      probe.className = "svh-probe";
+      document.body.appendChild(probe);
+      var MIN_ZOOM = 0.8;
+
+      function fit() {
+        var slides = document.querySelectorAll(".slide");
+        slides.forEach(function (slide) {
+          var parts = Array.prototype.filter.call(slide.children, function (el) { return el.tagName !== "SCRIPT"; });
+          parts.forEach(function (el) { el.style.zoom = ""; });
+          var pad = parseFloat(getComputedStyle(slide).paddingTop) * 2;
+          var room = probe.getBoundingClientRect().height - pad;
+          var height = function () {
+            return parts[parts.length - 1].getBoundingClientRect().bottom - parts[0].getBoundingClientRect().top;
+          };
+          var zoom = 1;
+          while (height() > room && zoom > MIN_ZOOM) {
+            zoom = Math.round((zoom - 0.02) * 100) / 100;
+            parts.forEach(function (el) { el.style.zoom = zoom; });
+          }
+        });
+      }
+
+      var timer;
+      window.addEventListener("resize", function () { clearTimeout(timer); timer = setTimeout(fit, 150); });
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+      fit();
+    })();
+
+    // Move one section per swipe, wheel/trackpad flick or key press, with an eased animation
+    // (native snapping on iOS is too fast and cannot be slowed down). window.PAGING may override
+    // the defaults: { duration: ms, swipe: px, wheel: delta }.
+    (function () {
+      var root = document.documentElement;
+      var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+      var opt = function (key, fallback) { return (window.PAGING && window.PAGING[key]) || fallback; };
+      var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      var GESTURE_GAP = 200;  // ms of wheel silence that separates one gesture from the next
+      var STEP = 0.85;        // share of the screen to move inside a slide taller than the screen
+
+      root.classList.add("paging");
+
+      var animating = false, wheelSum = 0, lastWheel = 0, gestureUsed = false, settleTimer;
+
+      function indexAt(y) {
+        var i = 0;
+        slides.forEach(function (s, k) { if (s.offsetTop <= y + 2) i = k; });
+        return i;
+      }
+
+      function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+
+      function animateTo(y) {
+        var from = window.scrollY, dist = y - from;
+        if (Math.abs(dist) < 1) return;
+        var duration = reduceMotion.matches ? 0 : opt("duration", 700);
+        var start = performance.now();
+        animating = true;
+        (function frame(now) {
+          var t = duration ? Math.min(1, (now - start) / duration) : 1;
+          window.scrollTo(0, from + dist * ease(t));
+          if (t < 1) requestAnimationFrame(frame);
+          else animating = false;
+        })(start);
+      }
+
+      function goTo(i, fromBelow) {
+        i = Math.max(0, Math.min(slides.length - 1, i));
+        var s = slides[i];
+        // Coming back up into a slide taller than the screen lands on its last screenful.
+        animateTo(fromBelow ? Math.max(s.offsetTop, s.offsetTop + s.offsetHeight - window.innerHeight) : s.offsetTop);
+        s.focus({ preventScroll: true });
+      }
+
+      function move(dir) {
+        if (animating) return;
+        var y = window.scrollY, h = window.innerHeight, i = indexAt(y), s = slides[i];
+        var top = s.offsetTop, bottom = top + s.offsetHeight;
+        if (dir > 0 && y + h < bottom - 1) animateTo(Math.min(y + h * STEP, bottom - h));
+        else if (dir < 0 && y > top + 1) animateTo(Math.max(y - h * STEP, top));
+        else if (i + dir >= 0 && i + dir < slides.length) goTo(i + dir, dir < 0);
+      }
+
+      slides.forEach(function (s) { s.tabIndex = -1; });
+
+      window.addEventListener("wheel", function (e) {
+        if (e.ctrlKey) return;  // pinch-zoom on trackpads
+        e.preventDefault();
+        var now = performance.now();
+        if (now - lastWheel > GESTURE_GAP) { gestureUsed = false; wheelSum = 0; }
+        lastWheel = now;
+        if (gestureUsed) return;  // swallow the rest of this flick, including its momentum
+        if (animating) { gestureUsed = true; return; }
+        wheelSum += e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1);
+        if (Math.abs(wheelSum) >= opt("wheel", 30)) {
+          gestureUsed = true;
+          move(wheelSum > 0 ? 1 : -1);
+        }
+      }, { passive: false });
+
+      var touch = null;
+      window.addEventListener("touchstart", function (e) {
+        touch = e.touches.length === 1 ? { x: e.touches[0].clientX, y: e.touches[0].clientY } : null;
+      }, { passive: true });
+      window.addEventListener("touchmove", function (e) {
+        if (touch && e.touches.length === 1 && e.cancelable) e.preventDefault();  // pinch-zoom stays native
+      }, { passive: false });
+      window.addEventListener("touchend", function (e) {
+        if (!touch) return;
+        var t = e.changedTouches[0], dx = touch.x - t.clientX, dy = touch.y - t.clientY;
+        touch = null;
+        if (Math.abs(dy) >= opt("swipe", 40) && Math.abs(dy) > Math.abs(dx)) move(dy > 0 ? 1 : -1);
+      });
+
+      window.addEventListener("keydown", function (e) {
+        if (e.altKey || e.ctrlKey || e.metaKey || /^(INPUT|TEXTAREA|BUTTON|SELECT)$/.test(e.target.tagName)) return;
+        var k = e.key;
+        if (k === "ArrowDown" || k === "PageDown" || (k === " " && !e.shiftKey)) move(1);
+        else if (k === "ArrowUp" || k === "PageUp" || (k === " " && e.shiftKey)) move(-1);
+        else if (k === "Home") goTo(0);
+        else if (k === "End") goTo(slides.length - 1);
+        else return;
+        e.preventDefault();
+      });
+
+      document.addEventListener("click", function (e) {
+        var a = e.target.closest && e.target.closest('a[href^="#"]');
+        var target = a && document.getElementById(a.getAttribute("href").slice(1));
+        var i = slides.indexOf(target);
+        if (i < 0) return;
+        e.preventDefault();
+        history.replaceState(null, "", a.getAttribute("href"));
+        goTo(i);
+      });
+
+      // Anything else that scrolls (scrollbar drag, find-in-page) settles on the nearest slide edge.
+      window.addEventListener("scroll", function () {
+        clearTimeout(settleTimer);
+        settleTimer = setTimeout(function () {
+          if (animating) return;
+          var y = window.scrollY, s = slides[indexAt(y + window.innerHeight / 2)];
+          var top = s.offsetTop, bottom = top + s.offsetHeight;
+          if (y < top || y + window.innerHeight > bottom) animateTo(y < top ? top : Math.max(top, bottom - window.innerHeight));
+        }, 150);
+      }, { passive: true });
+
+      // Keep the current slide aligned after the screen size (or the fit script) changes heights.
+      var resizeTimer;
+      window.addEventListener("resize", function () {
+        var i = indexAt(window.scrollY);
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () { window.scrollTo(0, slides[i].offsetTop); }, 200);
+      });
     })();
   </script>
 </main>
