@@ -22,7 +22,13 @@
     }
   }
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html {
+    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; scroll-snap-type: none; }
+  }
   body {
     margin: 0;
     background: var(--bg);
@@ -32,7 +38,17 @@
   main {
     max-width: 620px;
     margin: 0 auto;
-    padding: 18vh 16px 30vh;
+    padding: 0 16px;
+  }
+  .slide {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 48px 0;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
   }
   h1 { font-size: 20px; font-weight: 600; margin: 0 0 4px; letter-spacing: 0.02em; }
   h2 { font-size: 14px; font-weight: 600; margin: 0 0 16px; }
@@ -46,19 +62,15 @@
   .intro { margin-bottom: 28px; }
   nav a { display: block; text-decoration: none; width: fit-content; }
   nav a:hover { text-decoration: underline; }
-  section {
-    margin-top: 96px;
-    padding-top: 24px;
-    border-top: 1px solid var(--rule);
-    scroll-margin-top: 24px;
-  }
+  section { border-top: 1px solid var(--rule); }
   .entry { margin-bottom: 20px; }
   .top { display: inline-block; margin-top: 8px; color: var(--muted); }
   footer { margin-top: 28px; color: var(--muted); font-size: 12px; }
 </style>
 </head>
 <body>
-<main id="top">
+<main>
+  <header id="top" class="slide">
   <h1>Fraj Yassine Lakhal</h1>
   <p class="muted">Robotics engineer · Munich, Germany</p>
 
@@ -74,8 +86,9 @@
   </nav>
 
   <footer>yassinelakhal.tech</footer>
+  </header>
 
-  <section id="education">
+  <section class="slide" id="education">
     <h2>education</h2>
 
     <div class="entry">
@@ -99,7 +112,7 @@
     <a class="top" href="#top">↑ top</a>
   </section>
 
-  <section id="experience">
+  <section class="slide" id="experience">
     <h2>experience</h2>
 
     <div class="entry">
@@ -132,7 +145,7 @@
     <a class="top" href="#top">↑ top</a>
   </section>
 
-  <section id="projects">
+  <section class="slide" id="projects">
     <h2>projects</h2>
 
     <div class="entry">
@@ -167,14 +180,14 @@
     <a class="top" href="#top">↑ top</a>
   </section>
 
-  <section id="skills">
+  <section class="slide" id="skills">
     <h2>skills</h2>
     <p>ROS, RViz, Gazebo, Python, C++, PyTorch, OpenCV, Docker, Kubernetes, PostgreSQL, CI/CD</p>
     <p class="muted">Arabic, French (native) · German, English (C1)</p>
     <a class="top" href="#top">↑ top</a>
   </section>
 
-  <section id="contact">
+  <section class="slide" id="contact">
     <h2>contact</h2>
     <p>
       <a href="mailto:lakhalfrajyassine@gmail.com">lakhalfrajyassine@gmail.com</a><br>
