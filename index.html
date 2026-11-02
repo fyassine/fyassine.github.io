@@ -64,6 +64,16 @@
   nav a:hover { text-decoration: underline; }
   section { border-top: 1px solid var(--rule); }
   .entry { margin-bottom: 20px; }
+  .reveal {
+    font: inherit;
+    color: var(--muted);
+    background: none;
+    border: 1px dashed var(--muted);
+    padding: 0 6px;
+    margin-bottom: 4px;
+    cursor: pointer;
+  }
+  .reveal:hover { color: var(--fg); border-color: var(--fg); }
   .top { display: inline-block; margin-top: 8px; color: var(--muted); }
   footer { margin-top: 28px; color: var(--muted); font-size: 12px; }
 </style>
@@ -185,10 +195,28 @@
   <section class="slide" id="contact">
     <h2>contact</h2>
     <p>
+      <span id="email-line" hidden><button type="button" id="email" class="reveal">show email</button><br></span>
+      <noscript>email: use LinkedIn<br></noscript>
       <a href="https://www.linkedin.com/in/fraj-yassine-lakhal">linkedin.com/in/fraj-yassine-lakhal</a>
     </p>
     <a class="top" href="#top">↑ top</a>
   </section>
+  <script>
+    // The address is only assembled after a click, so it never appears in the page source.
+    (function () {
+      var btn = document.getElementById("email");
+      var decode = function (codes) { return String.fromCharCode.apply(null, codes.slice().reverse()); };
+      document.getElementById("email-line").hidden = false;
+      btn.addEventListener("click", function () {
+        var addr = decode([104, 99, 101, 116, 46, 108, 97, 104, 107, 97, 108, 101, 110, 105, 115, 115, 97, 121, 64, 116, 99, 97, 116, 110, 111, 99]);
+        var link = document.createElement("a");
+        link.href = decode([58, 111, 116, 108, 105, 97, 109]) + addr;
+        link.textContent = addr;
+        btn.replaceWith(link);
+        link.focus();
+      }, { once: true });
+    })();
+  </script>
 </main>
 </body>
 </html>
