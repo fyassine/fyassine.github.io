@@ -77,7 +77,7 @@
   }
   h1 { font-size: 20px; font-weight: 500; margin: 0 0 4px; letter-spacing: 0.02em; }
   h2 { font-size: 14px; font-weight: 500; margin: 0 0 16px; color: var(--muted); }
-  h3 { font-size: 14px; font-weight: 500; margin: 0; }
+  h3 { font-size: 16px; font-weight: 500; line-height: 1.4; margin: 0 0 2px; }
   p { margin: 0 0 12px; }
   a { color: inherit; text-underline-offset: 3px; text-decoration-color: var(--muted); }
   a:hover { text-decoration-color: currentColor; }
@@ -108,9 +108,16 @@
   .top { display: inline-block; margin-top: 8px; color: var(--muted); }
   footer { margin-top: 28px; color: var(--muted); font-size: 12px; }
   .svh-probe { position: fixed; top: 0; height: 100vh; height: 100svh; width: 0; visibility: hidden; }
-  /* With JavaScript, the paging script below moves one section per gesture and keeps mobile
-     toolbars from collapsing, so slides match the visible screen exactly (dvh). */
+  /* With JavaScript, the paging script below moves one section per gesture by sliding <main>
+     with a GPU transform; the page itself never scrolls, so mobile toolbars stay put and each
+     slide matches the visible screen exactly (dvh). */
+  html.paging, html.paging body { height: 100%; overflow: hidden; overscroll-behavior: none; }
   html.paging { scroll-snap-type: none; scroll-behavior: auto; }
+  html.paging main {
+    position: relative;
+    will-change: transform;
+    transition: transform 700ms cubic-bezier(0.65, 0, 0.35, 1);
+  }
   html.paging .slide { min-height: 100dvh; }
   html.paging .svh-probe { height: 100dvh; }
   .slide:focus { outline: none; }
@@ -292,11 +299,13 @@
       fit();
     })();
 
-    // Move one section per swipe, wheel/trackpad flick or key press, with an eased animation
-    // (native snapping on iOS is too fast and cannot be slowed down). window.PAGING may override
-    // the defaults: { duration: ms, swipe: px, wheel: delta }.
+    // Move one section per swipe, wheel/trackpad flick or key press. The page itself never scrolls:
+    // the column of sections slides with a CSS transform transition, which the GPU animates at the
+    // screen's full refresh rate (JavaScript-driven scrolling is capped at 60 fps in Safari).
+    // window.PAGING may override the defaults: { duration: ms, swipe: px, wheel: delta }.
     (function () {
       var root = document.documentElement;
+      var track = document.querySelector("main");
       var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
       var opt = function (key, fallback) { return (window.PAGING && window.PAGING[key]) || fallback; };
       var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -305,7 +314,7 @@
 
       root.classList.add("paging");
 
-      var animating = false, wheelSum = 0, lastWheel = 0, gestureUsed = false, settleTimer;
+      var offset = 0, animating = false, doneTimer, wheelSum = 0, lastWheel = 0, gestureUsed = false;
 
       function indexAt(y) {
         var i = 0;
@@ -313,36 +322,49 @@
         return i;
       }
 
-      function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+      function maxOffset() { return Math.max(0, track.offsetHeight - window.innerHeight); }
 
-      function animateTo(y) {
-        var from = window.scrollY, dist = y - from;
-        if (Math.abs(dist) < 1) return;
-        var duration = reduceMotion.matches ? 0 : opt("duration", 700);
-        var start = performance.now();
-        animating = true;
-        (function frame(now) {
-          var t = duration ? Math.min(1, (now - start) / duration) : 1;
-          window.scrollTo(0, from + dist * ease(t));
-          if (t < 1) requestAnimationFrame(frame);
-          else animating = false;
-        })(start);
+      function finish() {
+        clearTimeout(doneTimer);
+        animating = false;
       }
 
-      function goTo(i, fromBelow) {
+      function setOffset(y, animate) {
+        y = Math.max(0, Math.min(maxOffset(), y));
+        var duration = animate && !reduceMotion.matches ? opt("duration", 700) : 0;
+        if (Math.abs(y - offset) < 1) { offset = y; return; }
+        offset = y;
+        track.style.transitionDuration = duration + "ms";
+        // Redirecting a move already in progress starts at full speed instead of easing in again.
+        track.style.transitionTimingFunction = animating ? "cubic-bezier(0.22, 1, 0.36, 1)" : "";
+        track.style.transform = "translate3d(0," + (-y) + "px,0)";
+        if (duration) {
+          animating = true;
+          clearTimeout(doneTimer);
+          doneTimer = setTimeout(finish, duration + 100);  // in case transitionend never fires
+        }
+      }
+
+      track.addEventListener("transitionend", function (e) {
+        if (e.target === track && e.propertyName === "transform") finish();
+      });
+
+      function goTo(i, fromBelow, animate) {
         i = Math.max(0, Math.min(slides.length - 1, i));
         var s = slides[i];
         // Coming back up into a slide taller than the screen lands on its last screenful.
-        animateTo(fromBelow ? Math.max(s.offsetTop, s.offsetTop + s.offsetHeight - window.innerHeight) : s.offsetTop);
-        s.focus({ preventScroll: true });
+        setOffset(fromBelow ? Math.max(s.offsetTop, s.offsetTop + s.offsetHeight - window.innerHeight) : s.offsetTop,
+                  animate !== false);
+        if (!s.contains(document.activeElement)) s.focus({ preventScroll: true });
       }
 
+      // A gesture during a move continues from where that move is heading, so quick swipes
+      // chain section by section instead of being dropped.
       function move(dir) {
-        if (animating) return;
-        var y = window.scrollY, h = window.innerHeight, i = indexAt(y), s = slides[i];
+        var h = window.innerHeight, i = indexAt(offset), s = slides[i];
         var top = s.offsetTop, bottom = top + s.offsetHeight;
-        if (dir > 0 && y + h < bottom - 1) animateTo(Math.min(y + h * STEP, bottom - h));
-        else if (dir < 0 && y > top + 1) animateTo(Math.max(y - h * STEP, top));
+        if (dir > 0 && offset + h < bottom - 1) setOffset(Math.min(offset + h * STEP, bottom - h), true);
+        else if (dir < 0 && offset > top + 1) setOffset(Math.max(offset - h * STEP, top), true);
         else if (i + dir >= 0 && i + dir < slides.length) goTo(i + dir, dir < 0);
       }
 
@@ -355,7 +377,6 @@
         if (now - lastWheel > GESTURE_GAP) { gestureUsed = false; wheelSum = 0; }
         lastWheel = now;
         if (gestureUsed) return;  // swallow the rest of this flick, including its momentum
-        if (animating) { gestureUsed = true; return; }
         wheelSum += e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1);
         if (Math.abs(wheelSum) >= opt("wheel", 30)) {
           gestureUsed = true;
@@ -398,24 +419,32 @@
         goTo(i);
       });
 
-      // Anything else that scrolls (scrollbar drag, find-in-page) settles on the nearest slide edge.
-      window.addEventListener("scroll", function () {
-        clearTimeout(settleTimer);
-        settleTimer = setTimeout(function () {
-          if (animating) return;
-          var y = window.scrollY, s = slides[indexAt(y + window.innerHeight / 2)];
-          var top = s.offsetTop, bottom = top + s.offsetHeight;
-          if (y < top || y + window.innerHeight > bottom) animateTo(y < top ? top : Math.max(top, bottom - window.innerHeight));
-        }, 150);
-      }, { passive: true });
+      // Tabbing to a link in another section brings that section into view.
+      document.addEventListener("focusin", function (e) {
+        var s = e.target.closest && e.target.closest(".slide");
+        var i = slides.indexOf(s);
+        if (i >= 0 && i !== indexAt(offset)) goTo(i);
+      });
+
+      // The browser may still scroll the window or <body> behind the transform (focus, find-in-page,
+      // iOS during a fast swipe); undo it so only the transform positions the page.
+      document.addEventListener("scroll", function (e) {
+        var el = e.target === document ? document.scrollingElement : e.target;
+        if (el && el.scrollTop !== 0) el.scrollTop = 0;
+      }, { capture: true, passive: true });
 
       // Keep the current slide aligned after the screen size (or the fit script) changes heights.
       var resizeTimer;
       window.addEventListener("resize", function () {
-        var i = indexAt(window.scrollY);
+        var i = indexAt(offset);
         clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(function () { window.scrollTo(0, slides[i].offsetTop); }, 200);
+        resizeTimer = setTimeout(function () { goTo(i, false, false); }, 200);
       });
+
+      // Open at the section named in the URL, without animating.
+      var start = slides.indexOf(document.getElementById(location.hash.slice(1)));
+      window.scrollTo(0, 0);
+      if (start > 0) goTo(start, false, false);
     })();
   </script>
 </main>
